@@ -1,0 +1,25 @@
+{
+  "name": "e96/yii2-sentry",
+  "description": "A Yii2 client for Sentry (http://getsentry.com)",
+  "type": "yii2-extension",
+  "keywords": ["log", "sentry", "raven", "yii2"],
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "m8rge",
+      "email": "to.merge@gmail.com",
+      "homepage": "http://aputilov.ru"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "yiisoft/yii2": "*",
+    "raven/raven": "~0.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "e96\\raven\\": "src/"
+    }
+  }
+}
