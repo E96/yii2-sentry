@@ -5,7 +5,7 @@ namespace e96\sentry;
 use yii\base\Component;
 
 /**
- * @property $client \Raven_Client
+ * @property \Raven_Client $client
  */
 class ErrorHandler extends Component
 {
