@@ -27,3 +27,11 @@ In config file:
     ],
 ]
 ```
+You can provide additional information with exceptions:
+```
+/** @var ErrorHandler $raven */
+$raven = \Yii::$app->get('raven');
+$raven->client->extra_context($task->attributes);
+
+throw new Exception('unknown task type');
+```
