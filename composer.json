@@ -19,7 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "e96\\raven\\": "src/"
+      "e96\\sentry\\": "src/"
     }
   }
 }
