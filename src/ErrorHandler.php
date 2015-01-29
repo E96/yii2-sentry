@@ -43,7 +43,8 @@ class ErrorHandler extends Component
 
         $this->ravenErrorHandler = new \Raven_ErrorHandler($this->client);
         $this->ravenErrorHandler->registerErrorHandler(true);
-        $this->ravenErrorHandler->registerShutdownFunction();
+        // shutdown function not working in yii2 yet: https://github.com/yiisoft/yii2/issues/6637
+        //$this->ravenErrorHandler->registerShutdownFunction();
         $this->oldExceptionHandler = set_exception_handler(array($this, 'handleYiiExceptions'));
     }
 

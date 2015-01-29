@@ -3,6 +3,7 @@
 namespace e96\sentry;
 
 use Raven_Stacktrace;
+use yii\base\ErrorException;
 use yii\log\Logger;
 
 class Target extends \yii\log\Target
@@ -43,6 +44,12 @@ class Target extends \yii\log\Target
     {
         $messages = parent::filterMessages($messages, $levels, $categories, $except);
         foreach ($messages as $i => $message) {
+            $type = explode(':', $message[2]);
+            // shutdown function not working in yii2 yet: https://github.com/yiisoft/yii2/issues/6637
+            // allow fatal errors exceptions in log messages
+            if ($type[0] == 'yii\base\ErrorException' && ErrorException::isFatalError($type[1])) {
+                continue;
+            }
             if (strpos($message[0], 'exception \'') === 0) {
                 unset($messages[$i]);
             }
