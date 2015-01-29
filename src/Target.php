@@ -47,7 +47,11 @@ class Target extends \yii\log\Target
             $type = explode(':', $message[2]);
             // shutdown function not working in yii2 yet: https://github.com/yiisoft/yii2/issues/6637
             // allow fatal errors exceptions in log messages
-            if ($type[0] == 'yii\base\ErrorException' && ErrorException::isFatalError($type[1])) {
+            if (is_array($type) &&
+                sizeof($type) == 2 &&
+                $type[0] == 'yii\base\ErrorException' &&
+                ErrorException::isFatalError($type[1])
+            ) {
                 continue;
             }
             if (strpos($message[0], 'exception \'') === 0) {
