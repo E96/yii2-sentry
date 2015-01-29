@@ -35,3 +35,20 @@ $raven->client->extra_context($task->attributes);
 
 throw new Exception('unknown task type');
 ```
+
+## Rich logging through built in Yii2 logging methods
+
+```php
+try{
+    $model1->save();
+}catch (\Exception $e){
+    Yii::warning([
+        'msg' => 'MsrpAddExceptionSentryTest', // this is for the text msg
+        'data' => [ // additional data sent as 'extra_data'
+            'userId' => Yii::$app->user->id,
+            'action' => 'MsrpAddExceptionSentryTest',
+        ],
+        'exception' => $e->getTrace(), // to get the native Sentry stacktrace feature available
+    ], 'commerceMsrp');
+}
+```
