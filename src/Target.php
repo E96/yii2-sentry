@@ -50,7 +50,7 @@ class Target extends \yii\log\Target
             if (is_array($type) &&
                 sizeof($type) == 2 &&
                 $type[0] == 'yii\base\ErrorException' &&
-                ErrorException::isFatalError($type[1])
+                ErrorException::isFatalError(['type' => $type[1]])
             ) {
                 continue;
             }
