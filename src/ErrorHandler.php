@@ -3,6 +3,7 @@
 namespace e96\sentry;
 
 use yii\base\Component;
+use yii\base\ErrorException;
 
 /**
  * @property \Raven_Client $client
@@ -48,14 +49,44 @@ class ErrorHandler extends Component
         $this->oldExceptionHandler = set_exception_handler(array($this, 'handleYiiExceptions'));
     }
 
+    /**
+     * @param \Exception $e
+     */
     public function handleYiiExceptions($e)
     {
-        if (!$e instanceof \yii\base\ErrorException) {
+        $this->filterForYiiErrorException($e);
+        if ($e) {
             $e->event_id = $this->client->getIdent($this->client->captureException($e));
         }
 
         if ($this->oldExceptionHandler) {
             call_user_func($this->oldExceptionHandler, $e);
+        }
+    }
+
+    /**
+     * Filter exception and its previous exceptions for yii\base\ErrorException
+     * Raven expects normal stacktrace, but yii\base\ErrorException may have xdebug_get_function_stack
+     * @param \Exception $e
+     */
+    public function filterForYiiErrorException(&$e)
+    {
+        if (function_exists('xdebug_get_function_stack')) {
+            if ($e instanceof ErrorException) {
+                $e = null;
+                return;
+            }
+
+            $selectedException = $e;
+            while ($nestedException = $selectedException->getPrevious()) {
+                if ($nestedException instanceof ErrorException) {
+                    $ref = new \ReflectionProperty('Exception', 'previous');
+                    $ref->setAccessible(true);
+                    $ref->setValue($selectedException, null);
+                    break;
+                }
+                $selectedException = $selectedException->getPrevious();
+            }
         }
     }
 
