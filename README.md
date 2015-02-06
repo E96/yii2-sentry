@@ -29,9 +29,15 @@ In config file:
 ```
 You can provide additional information with exceptions:
 ```php
-/** @var ErrorHandler $raven */
-$raven = \Yii::$app->get('raven');
-$raven->client->extra_context($task->attributes);
-
+SentryHelper::extraData($task->attributes);
 throw new Exception('unknown task type');
+```
+
+Or just capture message with full stacktrace
+```php
+try {
+    throw new Exception('FAIL');
+} catch (Exception $e) {
+    SentryHelper::captureWithMessage('Fail to save model', $e);
+}
 ```
