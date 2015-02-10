@@ -40,4 +40,16 @@ class SentryHelper
 
         return false;
     }
+
+    public static function captureException($exception)
+    {
+        /** @var ErrorHandler $raven */
+        $raven = \Yii::$app->get('raven', false);
+        if ($raven instanceof ErrorHandler) {
+            $raven->client->captureException($exception);
+            return true;
+        }
+
+        return false;
+    }
 }
