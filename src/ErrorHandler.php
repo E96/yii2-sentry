@@ -54,8 +54,7 @@ class ErrorHandler extends Component
      */
     public function handleYiiExceptions($e)
     {
-        $this->filterForYiiErrorException($e);
-        if ($e) {
+        if ($this->canLogException($e)) {
             $e->event_id = $this->client->getIdent($this->client->captureException($e));
         }
 
@@ -68,13 +67,13 @@ class ErrorHandler extends Component
      * Filter exception and its previous exceptions for yii\base\ErrorException
      * Raven expects normal stacktrace, but yii\base\ErrorException may have xdebug_get_function_stack
      * @param \Exception $e
+     * @return bool
      */
-    public function filterForYiiErrorException(&$e)
+    public function canLogException(&$e)
     {
         if (function_exists('xdebug_get_function_stack')) {
             if ($e instanceof ErrorException) {
-                $e = null;
-                return;
+                return false;
             }
 
             $selectedException = $e;
@@ -83,11 +82,13 @@ class ErrorHandler extends Component
                     $ref = new \ReflectionProperty('Exception', 'previous');
                     $ref->setAccessible(true);
                     $ref->setValue($selectedException, null);
-                    break;
+                    return true;
                 }
                 $selectedException = $selectedException->getPrevious();
             }
         }
+
+        return true;
     }
 
     /**
