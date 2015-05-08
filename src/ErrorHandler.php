@@ -54,6 +54,8 @@ class ErrorHandler extends Component
      */
     public function handleYiiExceptions($e)
     {
+        restore_exception_handler();
+
         if ($this->canLogException($e)) {
             $e->event_id = $this->client->getIdent($this->client->captureException($e));
         }
