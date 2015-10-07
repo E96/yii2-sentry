@@ -65,7 +65,7 @@ class Target extends \yii\log\Target
             ) {
                 continue;
             }
-            if (is_string($message) && strpos($message[0], 'exception \'') === 0) {
+            if (is_string($message[0]) && strpos($message[0], 'exception \'') === 0) {
                 unset($messages[$i]);
             }
         }
