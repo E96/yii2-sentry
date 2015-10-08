@@ -108,17 +108,15 @@ class Target extends \yii\log\Target
             $data = [
                 'timestamp' => gmdate('Y-m-d\TH:i:s\Z', $timestamp),
                 'level' => $levelName,
-                'tags' => ['category' => $category],
+                'tags' => array_merge($tagsData, ['category' => $category]),
                 'message' => $msg,
+                'extra' => $extraData,
             ];
             if (!empty($traces)) {
                 $data['sentry.interfaces.Stacktrace'] = [
                     'frames' => Raven_Stacktrace::get_stack_info($traces),
                 ];
             }
-
-            $data['extra'] = $extraData;
-            $data['tags'] = $tagsData;
 
             $this->client->capture($data, false);
         }
