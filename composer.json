@@ -15,7 +15,7 @@
   "require": {
     "php": ">=5.4.0",
     "yiisoft/yii2": "*",
-    "raven/raven": "~0.10"
+    "sentry/sentry": "~0.10"
   },
   "autoload": {
     "psr-4": {
