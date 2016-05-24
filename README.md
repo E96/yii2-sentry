@@ -3,7 +3,7 @@ Yii2 sentry client
 
 ##Install
 ```
-php composer.phar require e96/yii2-sentry:dev-master
+php composer.phar require e96/yii2-sentry
 ```
 
 ## Usage
