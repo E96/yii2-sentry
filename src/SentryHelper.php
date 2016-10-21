@@ -23,6 +23,21 @@ class SentryHelper
     }
 
     /**
+     * @return bool
+     */
+    public static function clearExtraData()
+    {
+        /** @var ErrorHandler $raven */
+        $raven = \Yii::$app->get('raven', false);
+        if ($raven instanceof ErrorHandler) {
+            $raven->client->context->clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param string $message
      * @param null|\Exception $previousException
      * @param string $level one of Raven_Client::* levels
