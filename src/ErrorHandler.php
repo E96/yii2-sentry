@@ -6,7 +6,7 @@ use yii\base\Component;
 use yii\base\ErrorException;
 
 /**
- * @property \Raven_Client $client
+ * Sentry error handling component
  */
 class ErrorHandler extends Component
 {

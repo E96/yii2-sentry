@@ -6,6 +6,11 @@ use Raven_Stacktrace;
 use yii\base\ErrorException;
 use yii\log\Logger;
 
+/**
+ * Sentry log target
+ *
+ * "logVars" property is used to choose globals to add to the log record context
+ */
 class Target extends \yii\log\Target
 {
     /**
@@ -24,6 +29,9 @@ class Target extends \yii\log\Target
      */
     protected $client;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -31,13 +39,16 @@ class Target extends \yii\log\Target
         $this->client = new \Raven_Client($this->dsn, $this->clientOptions);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getContextMessage()
     {
         return '';
     }
 
     /**
-     * Filter all exceptions. They logged via ErrorHandler
+     * Filters all exceptions. They are logged via ErrorHandler
      * @inheritdoc
      */
     public static function filterMessages($messages, $levels = 0, $categories = [], $except = [])
@@ -54,7 +65,7 @@ class Target extends \yii\log\Target
             ) {
                 continue;
             }
-            if (strpos($message[0], 'exception \'') === 0) {
+            if (is_string($message[0]) && strpos($message[0], 'exception \'') === 0) {
                 unset($messages[$i]);
             }
         }
@@ -63,10 +74,30 @@ class Target extends \yii\log\Target
     }
 
     /**
-     * Exports log [[messages]] to a specific destination.
+     * @return array
+     * @see https://docs.getsentry.com/on-premise/learn/context/
+     */
+    protected function getTagsData()
+    {
+        return [];
+    }
+
+    /**
+     * @return array
+     * @see https://docs.getsentry.com/on-premise/learn/context/
+     */
+    protected function getExtraData()
+    {
+        return array_intersect_key($GLOBALS, array_flip($this->logVars));
+    }
+
+    /**
+     * @inheritdoc
      */
     public function export()
     {
+        $tagsData = $this->getTagsData();
+        $extraData = $this->getExtraData();
         foreach ($this->messages as $message) {
             list($msg, $level, $category, $timestamp, $traces) = $message;
 
@@ -77,8 +108,9 @@ class Target extends \yii\log\Target
             $data = [
                 'timestamp' => gmdate('Y-m-d\TH:i:s\Z', $timestamp),
                 'level' => $levelName,
-                'tags' => ['category' => $category],
+                'tags' => array_merge($tagsData, ['category' => $category]),
                 'message' => $msg,
+                'extra' => $extraData,
             ];
             if (!empty($traces)) {
                 $data['sentry.interfaces.Stacktrace'] = [
